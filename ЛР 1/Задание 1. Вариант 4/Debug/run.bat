@@ -1,0 +1,5 @@
+"Задание 1. Вариант 4.exe" "input1.txt" "output1-1.txt" "ма" "Мама" ""
+"Задание 1. Вариант 4.exe" "input0.txt" "" "" ""
+"Задание 1. Вариант 4.exe" "input1.txt" "" "" ""
+"Задание 1. Вариант 4.exe" "input1.txt" "output1-2.txt" "" ""
+"Задание 1. Вариант 4.exe" "input2.txt" "output2.txt" "я" "мы"
