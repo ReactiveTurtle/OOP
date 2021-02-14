@@ -21,7 +21,6 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	ifstream input(argv[1]);
-	cout << "'" << argv[2] << "'" << endl;
 	if (!input.is_open()) {
 		return 1;
 	}
@@ -31,7 +30,14 @@ int main(int argc, char* argv[])
 	int searchStrLength = searchStr.length();
 	string replaceStr = argv[4];
 	string buffer;
+	bool isFirst = true;
 	while (getline(input, buffer)) {
+		if (isFirst) {
+			isFirst = false;
+		}
+		else {
+			output << endl;
+		}
 		int pos = 0;
 		string newLine;
 		while ((pos = buffer.find(searchStr)) > -1) {
@@ -39,7 +45,7 @@ int main(int argc, char* argv[])
 			buffer = buffer.substr(pos + searchStr.length());
 		}
 		newLine += buffer;
-		output << newLine << endl;
+		output << newLine;
 	}
 	input.close();
 	output.close();

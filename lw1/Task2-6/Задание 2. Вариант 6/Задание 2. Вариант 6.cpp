@@ -1,7 +1,4 @@
-﻿// Задание 2. Вариант 6.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 
 using namespace std;
@@ -9,7 +6,7 @@ using namespace std;
 int StringToInt(const string& str, int radix, bool& wasError);
 string IntToString(int n, int radix, bool& wasError);
 
-bool ValidateInputArgs(int argc, char* argv[]) {
+bool IsArgsEmpty(int argc, char* argv[]) {
 	if (argc < 4) {
 		return false;
 	}
@@ -20,73 +17,137 @@ bool ValidateInputArgs(int argc, char* argv[]) {
 	return true;
 }
 
-int main(int argc, char* argv[])
-{
-	if (!ValidateInputArgs(argc, argv)) {
-		return 1;
+int ParseInt(string str, bool& wasError) {
+	size_t pos;
+	try {
+		int result = stoi(str, &pos);
+		if (pos != str.size())
+			wasError = true;
+		return result;
 	}
-	int src = stoi(string(argv[1]));
-	int dst = stoi(string(argv[2]));
-	string numberStr = argv[3];
+	catch (exception e) {
+		wasError = true;
+	}
+	return 0;
+}
+
+string Convert(int src, int dst, string numberStr, bool& wasError) {
 	if (src == 10) {
-		bool wasError = false;
-		int number = stoi(numberStr);
-		string result = IntToString(number, dst, wasError);
-		cout << result << endl;
+		int number = ParseInt(numberStr, wasError);
+		return !wasError ? IntToString(number, dst, wasError) : "";
 	}
 	else if (dst == 10) {
-		bool wasError = false;
-		cout << StringToInt(numberStr, dst, wasError);
+		return to_string(StringToInt(numberStr, src, wasError));
 	}
 	else {
-		bool wasError = false;
-		int decimal = StringToInt(numberStr, 10, wasError);
-		cout << IntToString(decimal, dst, wasError);
+		int decimal = StringToInt(numberStr, src, wasError);
+		return !wasError ? IntToString(decimal, dst, wasError) : 0;
+	}
+}
+
+void End(string result, bool wasError) {
+	if (wasError) {
+		cout << "Error of converting";
+	}
+	else {
+		cout << result;
 	}
 	cout << endl;
+}
+
+int main(int argc, char* argv[])
+{
+	if (!IsArgsEmpty(argc, argv)) {
+		cout << "Empty args" << endl;
+		return 0;
+	}
+	bool wasError = false;
+	string result;
+	if (!wasError) {
+		int src = ParseInt(string(argv[1]), wasError);
+		if (wasError) {
+			End(result, wasError);
+			return 0;
+		}
+		int dst = ParseInt(string(argv[2]), wasError);
+		if (wasError) {
+			End(result, wasError);
+			return 0;
+		}
+
+		string numberStr = argv[3];
+		result = Convert(src, dst, numberStr, wasError);
+	}
+	End(result, wasError);
 	return 0;
 }
 
 int StringToInt(const string& str, int radix, bool& wasError) {
+	if (radix < 2 || radix > 36) {
+		wasError = true;
+		return 0;
+	}
+
 	bool isNegative = str[0] == '-';
 	string strNumber = str;
 	if (isNegative) {
 		strNumber = strNumber.substr(1);
 	}
 	int result = 0;
-	for (int i = 0; i < strNumber.length(); i++) {
+	for (int i = 0; i < strNumber.length() && !wasError; i++) {
 		char ch = strNumber[i];
 		int chNumber = 0;
 		if (ch >= '0' && ch <= '9') {
 			chNumber = ch - '0';
 		}
-		else if (ch >= 'A' && ch <= 'Z') {
+		else if (ch >= 'A' && ch <= ('A' + radix - 1)) {
 			chNumber = ch - 'A' + 10;
 		}
-		else if (ch >= 'a' && ch <= 'z') {
+		else if (ch >= 'a' && ch <= ('a' + radix - 1)) {
 			chNumber = ch - 'a' + 10;
 		}
+		else {
+			wasError = true;
+		}
 		result += chNumber * pow(radix, strNumber.length() - i - 1);
+		if (result == INT_MAX || result == INT_MIN) {
+			wasError = true;
+		}
 	}
+
+	if (wasError) {
+		return 0;
+	}
+
 	if (isNegative) {
 		result = -result;
 	}
 	return result;
 }
 
+char IntToChar(int number) {
+	if (number >= 0 && number <= 9) {
+		return to_string(number)[0];
+	}
+	else {
+		char symbol = 'A' + number - 10;
+		return symbol;
+	}
+}
+
 string IntToString(int n, int radix, bool& wasError) {
+	if (radix < 2 || radix > 36) {
+		wasError = true;
+		return "";
+	}
 	int number = abs(n);
 	string result;
 	while (number >= radix) {
 		int mod = number % radix;
 		number /= radix;
-		if (number >= 0 && number <= 9) {
-			result = number + "" + result;
-		}
-		else {
-			result = 'A' + "" + (mod - 10) + result;
-		}
+		result = IntToChar(mod) + result;
 	}
+	result = IntToChar(number) + result;
 	if (n < 0) {
 		result = "-" + result;
 	}

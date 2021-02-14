@@ -19,4 +19,19 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Tests.bat">
+      <Filter>Исходные файлы</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="10_16_31.txt" />
+    <Text Include="Error.txt" />
+    <Text Include="10_16_543210.txt" />
+    <Text Include="16_10_849EA.txt" />
+    <Text Include="16_2_849EA.txt" />
+    <Text Include="EmptyArgs.txt" />
+    <Text Include="36_10_BN5Z.txt" />
+    <Text Include="10_36_543239.txt" />
+  </ItemGroup>
 </Project>
