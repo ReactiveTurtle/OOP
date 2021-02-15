@@ -18,11 +18,11 @@ bool ValidateInputArgs(int argc, char* argv[]) {
 int main(int argc, char* argv[])
 {
 	if (!ValidateInputArgs(argc, argv)) {
-		return 1;
+		return 0;
 	}
 	ifstream input(argv[1]);
 	if (!input.is_open()) {
-		return 1;
+		return 0;
 	}
 	ofstream output(argv[2]);
 
@@ -39,13 +39,11 @@ int main(int argc, char* argv[])
 			output << endl;
 		}
 		int pos = 0;
-		string newLine;
 		while ((pos = buffer.find(searchStr)) > -1) {
-			newLine += buffer.substr(0, pos) + replaceStr;
+			output << buffer.substr(0, pos) << replaceStr;
 			buffer = buffer.substr(pos + searchStr.length());
 		}
-		newLine += buffer;
-		output << newLine;
+		output << buffer;
 	}
 	input.close();
 	output.close();

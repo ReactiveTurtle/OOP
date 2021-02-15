@@ -3,23 +3,58 @@
 
 using namespace std;
 
+struct ConvertModel {
+	int fromRadix;
+	int toRadix;
+	string value;
+	bool wasError;
+	ConvertModel(
+		int fromRadix,
+		int toRadix,
+		string value,
+		bool wasError) {
+		this->fromRadix = fromRadix;
+		this->toRadix = toRadix;
+		this->value = value;
+		this->wasError = wasError;
+	}
+};
+
+ConvertModel ValidateAndBuildModel(int argc, char* argv[]);
+int ParseInt(string str, bool& wasError);
+
+void End(string result, bool wasError);
+
+string Convert(ConvertModel& convertModel);
 int StringToInt(const string& str, int radix, bool& wasError);
 string IntToString(int n, int radix, bool& wasError);
 
-bool IsArgsEmpty(int argc, char* argv[]) {
-	if (argc < 4) {
-		return false;
+int main(int argc, char* argv[])
+{
+	ConvertModel convertModel = ValidateAndBuildModel(argc, argv);
+	string result = "";
+	if (!convertModel.wasError) {
+		result = Convert(convertModel);
 	}
-	string args[] = { argv[0], argv[1], argv[2], argv[3] };
-	if (args[1] == "" || args[2] == "" || args[3] == "") {
-		return false;
-	}
-	return true;
+	End(result, convertModel.wasError);
+	return 0;
+}
+
+ConvertModel ValidateAndBuildModel(int argc, char* argv[]) {
+	bool wasError = argc < 4;
+	return ConvertModel(
+		!wasError ? ParseInt(string(argv[1]), wasError) : 0,
+		!wasError ? ParseInt(string(argv[2]), wasError) : 0,
+		!wasError ? argv[3] : "",
+		wasError);
 }
 
 int ParseInt(string str, bool& wasError) {
-	size_t pos;
+	if (wasError) {
+		return 0;
+	}
 	try {
+		size_t pos;
 		int result = stoi(str, &pos);
 		if (pos != str.size())
 			wasError = true;
@@ -29,20 +64,6 @@ int ParseInt(string str, bool& wasError) {
 		wasError = true;
 	}
 	return 0;
-}
-
-string Convert(int src, int dst, string numberStr, bool& wasError) {
-	if (src == 10) {
-		int number = ParseInt(numberStr, wasError);
-		return !wasError ? IntToString(number, dst, wasError) : "";
-	}
-	else if (dst == 10) {
-		return to_string(StringToInt(numberStr, src, wasError));
-	}
-	else {
-		int decimal = StringToInt(numberStr, src, wasError);
-		return !wasError ? IntToString(decimal, dst, wasError) : 0;
-	}
 }
 
 void End(string result, bool wasError) {
@@ -55,31 +76,22 @@ void End(string result, bool wasError) {
 	cout << endl;
 }
 
-int main(int argc, char* argv[])
-{
-	if (!IsArgsEmpty(argc, argv)) {
-		cout << "Empty args" << endl;
-		return 0;
+string Convert(ConvertModel& convertModel) {
+	if (convertModel.value == "0") {
+		return "0";
 	}
-	bool wasError = false;
-	string result;
-	if (!wasError) {
-		int src = ParseInt(string(argv[1]), wasError);
-		if (wasError) {
-			End(result, wasError);
-			return 0;
-		}
-		int dst = ParseInt(string(argv[2]), wasError);
-		if (wasError) {
-			End(result, wasError);
-			return 0;
-		}
-
-		string numberStr = argv[3];
-		result = Convert(src, dst, numberStr, wasError);
+	if (convertModel.fromRadix == 10) {
+		int number = ParseInt(convertModel.value, convertModel.wasError);
+		return !convertModel.wasError ? IntToString(number, convertModel.toRadix, convertModel.wasError) : "";
 	}
-	End(result, wasError);
-	return 0;
+	else if (convertModel.toRadix == 10) {
+		int decimal = StringToInt(string(convertModel.value), convertModel.fromRadix, convertModel.wasError);
+		return !convertModel.wasError ? to_string(decimal) : "";
+	}
+	else {
+		int decimal = StringToInt(string(convertModel.value), convertModel.fromRadix, convertModel.wasError);
+		return !convertModel.wasError ? IntToString(decimal, convertModel.toRadix, convertModel.wasError) : "";
+	}
 }
 
 int StringToInt(const string& str, int radix, bool& wasError) {
@@ -88,7 +100,10 @@ int StringToInt(const string& str, int radix, bool& wasError) {
 		return 0;
 	}
 
-	bool isNegative = str[0] == '-';
+	bool isNegative = (str[0] == '-');
+	if (radix == 2) {
+		isNegative = str[0] == '1';
+	}
 	string strNumber = str;
 	if (isNegative) {
 		strNumber = strNumber.substr(1);
@@ -148,8 +163,13 @@ string IntToString(int n, int radix, bool& wasError) {
 		result = IntToChar(mod) + result;
 	}
 	result = IntToChar(number) + result;
+	string sign = "";
 	if (n < 0) {
-		result = "-" + result;
+		sign = (radix == 2 ? "1" : "-");
 	}
+	else if (radix == 2) {
+		sign = "0";
+	}
+	result = sign + result;
 	return result;
 }

@@ -159,12 +159,15 @@
   <ItemGroup>
     <Text Include="10_16_31.txt" />
     <Text Include="10_16_543210.txt" />
+    <Text Include="10_16_minus543210.txt" />
+    <Text Include="16_2_0.txt" />
+    <Text Include="10_2_minus849EA.txt" />
     <Text Include="10_36_543239.txt" />
     <Text Include="16_10_849EA.txt" />
+    <Text Include="2_16_110000100100111101010.txt" />
     <Text Include="16_2_849EA.txt" />
     <Text Include="36_10_BN5Z.txt" />
     <Text Include="Error.txt" />
-    <Text Include="EmptyArgs.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
