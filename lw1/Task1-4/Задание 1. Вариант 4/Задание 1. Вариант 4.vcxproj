@@ -157,9 +157,12 @@
     <None Include="Tests.bat" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="input1.txt" />
+    <Text Include="Empty.txt" />
+    <Text Include="Error.txt" />
+    <Text Include="ShortText.txt" />
     <Text Include="inputWhiteSpace.txt" />
-    <Text Include="output1.txt" />
+    <Text Include="ShortText_two_empty.txt" />
+    <Text Include="ShortText_two_you.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
