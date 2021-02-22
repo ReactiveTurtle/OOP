@@ -1,38 +1,94 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
+#include <optional>
 using namespace std;
+
+struct Args
+{
+	string inputFileName;
+	string outputFileName;
+	string searchString;
+	string replaceString;
+};
+
+Args ParseArgs(int argc, char* argv[], bool& wasError);
+bool Replace(string inputFileName, string outputFileName, string searchStr, string replaceStr);
 
 int main(int argc, char* argv[])
 {
-	if (argc < 5 ||
-		string(argv[1]) == "" || string(argv[2]) == "") {
-		cout << "****Error****" << endl;
-		return 0;
-	}
-	ifstream input(argv[1]);
-	if (!input.is_open()) {
-		return 0;
-	}
-	ofstream output(argv[2]);
-	if (!output.is_open()) {
-		return 0;
+	bool wasError = false;
+	Args args = ParseArgs(argc, argv, wasError);
+	if (wasError) {
+		return 1;
 	}
 
-	string searchStr = argv[3];
-	int searchStrLength = searchStr.length();
-	string replaceStr = argv[4];
+	if (!Replace(args.inputFileName, args.outputFileName, args.searchString, args.replaceString))\
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+Args ParseArgs(int argc, char* argv[], bool& wasError)
+{
+	Args args;
+	if (argc < 5)
+	{
+		wasError = true;
+	}
+
+	args.inputFileName = argv[0];
+	args.outputFileName = argv[1];
+	args.searchString = argv[2];
+	args.replaceString = argv[3];
+	return args;
+}
+
+bool Replace(string inputFileName, string outputFileName, string searchString, string replaceString)
+{
+	ifstream input(inputFileName);
+	if (!input.is_open())
+	{
+		return false;
+	}
+	ofstream output(outputFileName);
+	if (!output.is_open())
+	{
+		return false;
+	}
+
 	string buffer;
-	while (getline(input, buffer)) {
-		int pos = 0;
-		while (searchStr != "" && (pos = buffer.find(searchStr)) > -1) {
-			string newStr = buffer.substr(0, pos) + replaceStr;
-			output << newStr;
-			buffer = buffer.substr(pos + searchStr.length());
+	size_t searchStrLength = searchString.length();
+	while (getline(input, buffer))
+	{
+		size_t pos = 0;
+		size_t foundPos = 0;
+		while (searchString != "" && (foundPos = buffer.find(searchString, pos)) != string::npos)
+		{
+			if (!output.flush())
+			{
+				return false;
+			}
+			for (int i = pos; i < foundPos; i++)
+			{
+				output << buffer[i];
+			}
+			output << replaceString;
+			pos = foundPos + searchStrLength;
 		}
-		output << buffer << endl;
+		if (!output.flush())
+		{
+			return false;
+		}
+		for (int i = pos; i < buffer.length(); i++)
+		{
+			output << buffer[i];
+		}
+		output << endl;
 	}
 	input.close();
 	output.close();
-	return 0;
+	return true;
 }

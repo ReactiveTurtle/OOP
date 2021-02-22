@@ -164,6 +164,8 @@
     <Text Include="10_2_minus849EA.txt" />
     <Text Include="10_36_543239.txt" />
     <Text Include="16_10_849EA.txt" />
+    <Text Include="2_10_MAX_INT.txt" />
+    <Text Include="2_10_MIN_INT.txt" />
     <Text Include="2_16_110000100100111101010.txt" />
     <Text Include="16_2_849EA.txt" />
     <Text Include="36_10_BN5Z.txt" />

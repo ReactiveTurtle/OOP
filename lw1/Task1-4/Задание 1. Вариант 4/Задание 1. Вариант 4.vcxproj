@@ -158,11 +158,12 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Empty.txt" />
-    <Text Include="Error.txt" />
+    <Text Include="LongText_I_You.txt" />
+    <Text Include="LongText_I_You_Result.txt" />
     <Text Include="ShortText.txt" />
     <Text Include="inputWhiteSpace.txt" />
     <Text Include="ShortText_two_empty.txt" />
-    <Text Include="ShortText_two_you.txt" />
+    <Text Include="ShortText_two_twotwo.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

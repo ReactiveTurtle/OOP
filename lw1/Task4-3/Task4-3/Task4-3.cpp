@@ -21,14 +21,14 @@ int main(int argc, char* argv[])
 	ofstream output(argv[3], ios::binary);
 	if (!output.is_open()) {
 		cout << "Error" << endl;
-		return 0;
+		return 1;
 	}
 
 	size_t errorPos;
 	int mayBeKey = stoi(string(argv[4]), &errorPos);
 	if (errorPos != string(argv[4]).size() || (mayBeKey < 0 || mayBeKey > 255)) {
 		cout << "Error" << endl;
-		return 0;
+		return 1;
 	}
 	unsigned char key = mayBeKey;
 

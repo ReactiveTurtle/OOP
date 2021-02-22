@@ -36,5 +36,7 @@
     <Text Include="10_2_minus849EA.txt" />
     <Text Include="16_2_0.txt" />
     <Text Include="2_16_110000100100111101010.txt" />
+    <Text Include="2_10_MIN_INT.txt" />
+    <Text Include="2_10_MAX_INT.txt" />
   </ItemGroup>
 </Project>

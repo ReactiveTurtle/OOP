@@ -9,54 +9,42 @@ if %MyProgram% == "" (
 	exit /B 1
 )
 
-%MyProgram% 10 16 3Z > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% 10 16 3Z > "%TEMP%\output.txt" && goto err
 echo Test 1 passed
 
-%MyProgram% "" "" "" > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% "" "" "" > "%TEMP%\output.txt" && goto err
 echo Test 2 passed
 
-%MyProgram% 10 "" "" > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% 10 "" "" > "%TEMP%\output.txt" && goto err
 echo Test 3 passed
 
-%MyProgram% 10 16 "" > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% 10 16 "" > "%TEMP%\output.txt" && goto err
 echo Test 4 passed
 
 REM Проверка граничных значений Integer
-%MyProgram% 10 2 (%MaxInt% + 1) > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% 10 2 (%MaxInt% + 1) > "%TEMP%\output.txt" && goto err
 echo Test 5 passed
 
-%MyProgram% 10 2 (%MinInt% - 1) > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% 10 2 (%MinInt% - 1) > "%TEMP%\output.txt" && goto err
 echo Test 6 passed
 
-%MyProgram% 16 10 (%MaxInt% + 1) > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% 16 10 (%MaxInt% + 1) > "%TEMP%\output.txt" && goto err
 echo Test 7 passed
 
-%MyProgram% 16 10 (%MinInt% - 1) > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% 16 10 (%MinInt% - 1) > "%TEMP%\output.txt" && goto err
 echo Test 8 passed
 
-%MyProgram% (%MaxInt% + 1) 10 543210 > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% (%MaxInt% + 1) 10 543210 > "%TEMP%\output.txt" && goto err
 echo Test 9 passed
 
-%MyProgram% (%MinInt% - 1) 10 543210 > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% (%MinInt% - 1) 10 543210 > "%TEMP%\output.txt" && goto err
 echo Test 10 passed
 
 REM Проверка граничных значений возможных систем счисления
-%MyProgram% 37 10 543210 > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% 37 10 543210 > "%TEMP%\output.txt" && goto err
 echo Test 11 passed
 
-%MyProgram% 1 10 543210 > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% 1 10 543210 > "%TEMP%\output.txt" && goto err
 echo Test 12 passed
 
 %MyProgram% 10 36 543239 > "%TEMP%\output.txt" || goto err
@@ -68,13 +56,11 @@ fc 36_10_BN5Z.txt "%TEMP%\output.txt" > nul || goto err
 echo Test 14 passed
 
 REM Проверка нехватки аргументов
-%MyProgram% 10 16 > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% 10 16 > "%TEMP%\output.txt" && goto err
 echo Test 15 passed
 
 REM Преобразование
-%MyProgram% 10 16 3Z > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% 10 16 3Z > "%TEMP%\output.txt" && goto err
 echo Test 16 passed
 
 %MyProgram% 10 16 31 > "%TEMP%\output.txt" || goto err
@@ -108,6 +94,14 @@ echo Test 23 passed
 %MyProgram% 2 16 110000100100111101010 > "%TEMP%\output.txt" || goto err
 fc 2_16_110000100100111101010.txt "%TEMP%\output.txt" > nul || goto err
 echo Test 24 passed
+
+%MyProgram% 2 10 110000000000000000000000000000000 > "%TEMP%\output.txt" || goto err
+fc 2_10_MIN_INT.txt "%TEMP%\output.txt" > nul || goto err
+echo Test 25 passed
+
+%MyProgram% 2 10 01111111111111111111111111111111 > "%TEMP%\output.txt" || goto err
+fc 2_10_MAX_INT.txt "%TEMP%\output.txt" > nul || goto err
+echo Test 26 passed
 
 REM Тесты прошли успешно
 echo All tests passed successfully
