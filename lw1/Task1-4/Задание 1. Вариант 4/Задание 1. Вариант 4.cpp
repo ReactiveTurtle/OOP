@@ -1,7 +1,6 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
-#include <optional>
 using namespace std;
 
 struct Args
@@ -23,7 +22,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	if (!Replace(args.inputFileName, args.outputFileName, args.searchString, args.replaceString))\
+	if (!Replace(args.inputFileName, args.outputFileName, args.searchString, args.replaceString))
 	{
 		return 1;
 	}
@@ -39,10 +38,10 @@ Args ParseArgs(int argc, char* argv[], bool& wasError)
 		wasError = true;
 	}
 
-	args.inputFileName = argv[0];
-	args.outputFileName = argv[1];
-	args.searchString = argv[2];
-	args.replaceString = argv[3];
+	args.inputFileName = argv[1];
+	args.outputFileName = argv[2];
+	args.searchString = argv[3];
+	args.replaceString = argv[4];
 	return args;
 }
 
@@ -71,7 +70,7 @@ bool Replace(string inputFileName, string outputFileName, string searchString, s
 			{
 				return false;
 			}
-			for (int i = pos; i < foundPos; i++)
+			for (size_t i = pos; i < foundPos; i++)
 			{
 				output << buffer[i];
 			}
@@ -82,7 +81,7 @@ bool Replace(string inputFileName, string outputFileName, string searchString, s
 		{
 			return false;
 		}
-		for (int i = pos; i < buffer.length(); i++)
+		for (size_t i = pos; i < buffer.length(); i++)
 		{
 			output << buffer[i];
 		}
