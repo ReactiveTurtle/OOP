@@ -6,8 +6,7 @@ if %MyProgram% == "" (
 	exit /B 1
 )
 
-%MyProgram% > "%TEMP%\output.txt" || goto err
-fc Error.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% > "%TEMP%\output.txt" && goto err
 echo Test 1 passed
 
 %MyProgram% crypt SrcFile.txt "%TEMP%\output.txt" 1 || goto err

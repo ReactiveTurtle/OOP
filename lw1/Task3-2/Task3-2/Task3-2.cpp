@@ -1,186 +1,165 @@
 ﻿#include <string>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
+
 using namespace std;
 
-float** GetEmptyMatrix();
-float** ParseMatrixInput(ifstream& input, bool& wasError);
-float** Inverse(float** matrix, bool& wasError);
+struct Matrix3x3
+{
+	float items[3][3];
+};
+
+void PrintMatrix(Matrix3x3 matrix);
+Matrix3x3 ParseMatrixInput(istream& input, bool& wasError);
+Matrix3x3 Inverse(Matrix3x3 matrix, bool& wasError);
 
 int main(int argc, char* argv[])
 {
 	if (argc < 2)
 	{
-		cout << "Invalid input file" << endl;
-		return 0;
+		cout << "Not found name of input file" << endl;
+		return 1;
 	}
 	ifstream input(argv[1]);
 	if (!input.is_open())
 	{
-		cout << "Invalid input file" << endl;
-		return 0;
+		cout << "Input file not found" << endl;
+		return 1;
 	}
-	bool wasError = false;
-	
-	float** matrix = ParseMatrixInput(input, wasError);
-	if (wasError) 
-	{
-		cout << "Invalid input file" << endl;
-		return 0;
-	}
+	bool wasError;
 
-	float** inverseMatrix = Inverse(matrix, wasError);
+	Matrix3x3 matrix = ParseMatrixInput(input, wasError);
 	if (wasError)
 	{
-		cout << "The matrix is degenerate" << endl;
-		return 0;
+		cout << "Invalid matrix in input file" << endl;
+		return 1;
 	}
+
+	Matrix3x3 inverseMatrix = Inverse(matrix, wasError);
+	if (wasError)
+	{
+		cout << "Matrix is degenerate" << endl;
+		return 1;
+	}
+	PrintMatrix(inverseMatrix);
+	return 0;
+}
+
+void PrintMatrix(Matrix3x3 matrix)
+{
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			float buffer = inverseMatrix[i][j];
-			cout << buffer << (j == 2 ? "" : " ");
+			cout << setprecision(matrix.items[i][j]) << (j == 2 ? "" : " ");
 		}
 		cout << endl;
 	}
-	return 0;
 }
 
-string Clear(string str)
+Matrix3x3 GetZeroMatrix()
 {
-	string result = "";
-	bool isFirstNotSpaceFound = false;
-	size_t length = str.length();
-	for (int i = 0; i < length; i++)
+	Matrix3x3 matrix;
+	for (int i = 0; i < 3; i++)
 	{
-		if (isFirstNotSpaceFound)
+		for (int j = 0; j < 3; j++)
 		{
-			if (str[i] != ' ')
-			{
-				if (i - 1 > -1 && str[(size_t)i - 1] == ' ')
-				{
-					result += ' ';
-				}
-				result += str[i];
-			}
-		}
-		else if (str[i] != ' ') 
-		{
-			result += str[i];
-			isFirstNotSpaceFound = true;
+			matrix.items[i][j] = 0;
 		}
 	}
-	return result;
+	return matrix;
 }
 
-float** ParseMatrixInput(ifstream& input, bool& wasError)
+Matrix3x3 ParseMatrixInput(istream& input, bool& wasError)
 {
-	float** matrix = GetEmptyMatrix();
+	wasError = false;
+	Matrix3x3 matrix = GetZeroMatrix();
 	string buffer;
-	for (int i = 0; i < 3 && !wasError; i++) 
+	for (int i = 0; i < 3 && !wasError; i++)
 	{
-		if (!getline(input, buffer))
-		{
+		if (!input.good()) {
 			wasError = true;
+			return matrix;
 		}
-		else 
-		{
-			try 
-			{
-				buffer = Clear(buffer);
-				size_t errorPos;
-
-				size_t firstNumberEnd = buffer.find(' ');
-				string firstNumberStr = buffer.substr(0, firstNumberEnd);
-				buffer = buffer.substr((size_t)firstNumberEnd + 1);
-				float first = stof(firstNumberStr, &errorPos);
-				if (errorPos != firstNumberStr.size()) 
-				{
+		int j = 0;
+		char ch;
+		input >> ch;
+		string numberBuffer = "";
+		bool wasSpace = true;
+		while (ch != '\n') {
+			if (ch != ' ') {
+				if (j == 3) {
 					wasError = true;
 					return matrix;
 				}
-				matrix[i][0] = first;
-
-				size_t secondNumberEnd = buffer.find(' ');
-				string secondNumberStr = buffer.substr(0, secondNumberEnd);
-				float second = stof(secondNumberStr, &errorPos);
-				if (errorPos != secondNumberStr.size())
-				{
-					wasError = true;
-					return matrix;
-				}
-				matrix[i][1] = second;
-
-				string thirdNumberStr = buffer.substr(secondNumberEnd + 1);
-				float third = stof(thirdNumberStr, &errorPos);
-				if (errorPos != thirdNumberStr.size()) 
-				{
-					wasError = true;
-					return matrix;
-				}
-				matrix[i][2] = third;
+				numberBuffer += ch;
 			}
-			catch (exception e)
-			{
-				wasError = true;
-				return matrix;
+			else if (!wasSpace) {
+				try
+				{
+					size_t errorPos;
+					float number = stof(numberBuffer, &errorPos);
+					numberBuffer = "";
+					if (errorPos != numberBuffer.size()) {
+						wasError = true;
+						return matrix;
+					}
+					matrix.items[i][j] = number;
+					wasSpace = true;
+					j++;
+				}
+				catch (exception e)
+				{
+					wasError = true;
+					return matrix;
+				}
 			}
+			input >> ch;
 		}
 	}
 	return matrix;
 }
 
-float** GetEmptyMatrix() 
-{
-	float** matrix = new float* [3];
-	matrix[0] = new float[3];
-	matrix[1] = new float[3];
-	matrix[2] = new float[3];
-	return matrix;
-}
-
-float CalcDeterminant(float** matrix)
+float CalcDeterminant(Matrix3x3 matrix)
 {
 	float determinant = 0;
-	determinant += matrix[0][0] * matrix[1][1] * matrix[2][2];
-	determinant += matrix[0][1] * matrix[1][2] * matrix[2][0];
-	determinant += matrix[0][2] * matrix[1][0] * matrix[2][1];
+	determinant += matrix.items[0][0] * matrix.items[1][1] * matrix.items[2][2];
+	determinant += matrix.items[0][1] * matrix.items[1][2] * matrix.items[2][0];
+	determinant += matrix.items[0][2] * matrix.items[1][0] * matrix.items[2][1];
 
-	determinant -= matrix[0][2] * matrix[1][1] * matrix[2][0];
-	determinant -= matrix[0][0] * matrix[1][2] * matrix[2][1];
-	determinant -= matrix[0][1] * matrix[1][0] * matrix[2][2];
+	determinant -= matrix.items[0][2] * matrix.items[1][1] * matrix.items[2][0];
+	determinant -= matrix.items[0][0] * matrix.items[1][2] * matrix.items[2][1];
+	determinant -= matrix.items[0][1] * matrix.items[1][0] * matrix.items[2][2];
 	return determinant;
 }
 
-float** Inverse(float** matrix, bool& wasError)
+Matrix3x3 Inverse(Matrix3x3 matrix, bool& wasError)
 {
-	float** inverseMatrix = GetEmptyMatrix();
+	wasError = false;
+	Matrix3x3 inverseMatrix;
 	float determinant = CalcDeterminant(matrix);
 	if (determinant == 0)
 	{
 		wasError = true;
 		return matrix;
 	}
-	inverseMatrix[0][0] = matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1];
-	inverseMatrix[0][1] = matrix[0][2] * matrix[2][1] - matrix[0][1] * matrix[2][2];
-	inverseMatrix[0][2] = matrix[0][1] * matrix[1][2] - matrix[0][2] * matrix[1][1];
+	inverseMatrix.items[0][0] = matrix.items[1][1] * matrix.items[2][2] - matrix.items[1][2] * matrix.items[2][1];
+	inverseMatrix.items[0][1] = matrix.items[0][2] * matrix.items[2][1] - matrix.items[0][1] * matrix.items[2][2];
+	inverseMatrix.items[0][2] = matrix.items[0][1] * matrix.items[1][2] - matrix.items[0][2] * matrix.items[1][1];
 
-	inverseMatrix[1][0] = matrix[1][2] * matrix[2][0] - matrix[1][0] * matrix[2][2];
-	inverseMatrix[1][1] = matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0];
-	inverseMatrix[1][2] = matrix[0][2] * matrix[1][0] - matrix[0][0] * matrix[1][2];
+	inverseMatrix.items[1][0] = matrix.items[1][2] * matrix.items[2][0] - matrix.items[1][0] * matrix.items[2][2];
+	inverseMatrix.items[1][1] = matrix.items[0][0] * matrix.items[2][2] - matrix.items[0][2] * matrix.items[2][0];
+	inverseMatrix.items[1][2] = matrix.items[0][2] * matrix.items[1][0] - matrix.items[0][0] * matrix.items[1][2];
 
-	inverseMatrix[2][0] = matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0];
-	inverseMatrix[2][1] = matrix[0][1] * matrix[2][0] - matrix[0][0] * matrix[2][1];
-	inverseMatrix[2][2] = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-	for (int i = 0; i < 3; i++) 
+	inverseMatrix.items[2][0] = matrix.items[1][0] * matrix.items[2][1] - matrix.items[1][1] * matrix.items[2][0];
+	inverseMatrix.items[2][1] = matrix.items[0][1] * matrix.items[2][0] - matrix.items[0][0] * matrix.items[2][1];
+	inverseMatrix.items[2][2] = matrix.items[0][0] * matrix.items[1][1] - matrix.items[0][1] * matrix.items[1][0];
+	for (int i = 0; i < 3; i++)
 	{
-		for (int j = 0; j < 3; j++) 
+		for (int j = 0; j < 3; j++)
 		{
-			float number = inverseMatrix[i][j] / determinant;
-			int floor = (int)floorf(number);
-			float mod = number - floor;
-			inverseMatrix[i][j] = floor + round(mod * 1000) / 1000;
+			float number = inverseMatrix.items[i][j] / determinant;
 		}
 	}
 	return inverseMatrix;

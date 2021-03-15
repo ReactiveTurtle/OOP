@@ -7,24 +7,19 @@ if %MyProgram% == "" (
 	exit /B 1
 )
 
-%MyProgram% > "%TEMP%\output.txt" || goto err
-fc InvalidInputFile.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% > "%TEMP%\output.txt" && goto err
 echo Test 1 passed
 
-%MyProgram% FewLinesMatrix.txt > "%TEMP%\output.txt" || goto err
-fc InvalidInputFile.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% FewLinesMatrix.txt > "%TEMP%\output.txt" && goto err
 echo Test 2 passed
 
-%MyProgram% InvalidLineMatrix.txt > "%TEMP%\output.txt" || goto err
-fc InvalidInputFile.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% InvalidLineMatrix.txt > "%TEMP%\output.txt" && goto err
 echo Test 3 passed
 
-%MyProgram% WordMatrix.txt > "%TEMP%\output.txt" || goto err
-fc InvalidInputFile.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% WordMatrix.txt > "%TEMP%\output.txt" && goto err
 echo Test 4 passed
 
-%MyProgram% DegenerateMatrix.txt> "%TEMP%\output.txt" || goto err
-fc ErrorDegenerate.txt "%TEMP%\output.txt" > nul || goto err
+%MyProgram% DegenerateMatrix.txt> "%TEMP%\output.txt" && goto err
 echo Test 5 passed
 
 %MyProgram% ValidMatrix.txt> "%TEMP%\output.txt" || goto err
