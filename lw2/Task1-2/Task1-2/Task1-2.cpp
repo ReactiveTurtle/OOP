@@ -14,7 +14,7 @@ int main()
 	bool wasError;
 	vector<float> numbers = ReadNumbers(wasError);
 	if (wasError) {
-		cout << "Одно из чисел введено неверно" << endl;
+		cout << "One of the numbers is entered incorrectly" << endl;
 		return 1;
 	}
 
@@ -29,21 +29,34 @@ int main()
 	return 0;
 }
 
+bool IsNumber(const string& s)
+{
+	string::const_iterator it = s.begin();
+	while (it != s.end() && (isdigit(*it) || *it == '-')) ++it;
+	return !s.empty() && it == s.end();
+}
+
 vector<float> ReadNumbers(bool& wasError)
 {
 	wasError = false;
 	vector<float> numbers(0);
-	char previousCh = ' ';
-	char ch = getchar();
+	char previousCh;
+	char ch = ' ';
 	bool isFoundFirstNotSpace = false;
 
 	string mayBeNumber;
-	while (previousCh != '\n')
-	{
+	do {
+		previousCh = ch;
+		ch = getchar();
 		if (ch == ' ' || ch == '\n')
 		{
 			if (isFoundFirstNotSpace)
 			{
+				cout << mayBeNumber << endl;
+				if (!IsNumber(mayBeNumber)) {
+					wasError = true;
+					return numbers;
+				}
 				size_t errorPosition;
 				float number = stof(mayBeNumber, &errorPosition);
 				if (errorPosition != mayBeNumber.size())
@@ -53,6 +66,7 @@ vector<float> ReadNumbers(bool& wasError)
 				}
 				numbers.push_back(number);
 				mayBeNumber = "";
+				isFoundFirstNotSpace = false;
 			}
 		}
 		else
@@ -63,12 +77,7 @@ vector<float> ReadNumbers(bool& wasError)
 			}
 			mayBeNumber += ch;
 		}
-		previousCh = ch;
-		if (ch != '\n')
-		{
-			ch = getchar();
-		}
-	}
+	} while (ch != '\n');
 	return numbers;
 }
 

@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{34838b1c-ddf1-47f2-a561-671958237ca1}</ProjectGuid>
-    <RootNamespace>Task12tests</RootNamespace>
+    <ProjectGuid>{5590edc9-1c3f-4fbc-9707-6469c9170b01}</ProjectGuid>
+    <RootNamespace>Task44tests</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -151,14 +151,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Task1-2\VectorExtensions.cpp" />
-    <ClCompile Include="Task1-2_tests.cpp" />
+    <ClCompile Include="Task4-4_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Task1-2\VectorExtensions.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
+    <ClInclude Include="..\Task4-4\PrimeNumberGenerator.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
