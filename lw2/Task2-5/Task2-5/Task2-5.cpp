@@ -6,8 +6,8 @@ using namespace std;
 
 int main()
 {
-    string buffer;
-    while (getline(cin, buffer)) {
-        cout << HtmlDecode(buffer) << endl;
+    string line;
+    while (getline(cin, line)) {
+        cout << HtmlDecode(line) << endl;
     }
 }

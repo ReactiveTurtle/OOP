@@ -45,3 +45,16 @@ SCENARIO("Decode string with unexpected special chars")
 	REQUIRE(actual == expected);
 }
 
+SCENARIO("Decode string with many & and 'oi'")
+{
+	string actual = HtmlDecode("&&&&oi");
+	string expected = "&&&&oi";
+	REQUIRE(actual == expected);
+}
+
+SCENARIO("Decode string with many & and '&quot;'")
+{
+	string actual = HtmlDecode("&&&quot;;;");
+	string expected = "&&\";;";
+	REQUIRE(actual == expected);
+}

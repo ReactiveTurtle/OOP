@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include <iomanip>
 #include "VectorExtensions.h"
 
@@ -23,7 +24,7 @@ int main()
 	if (wasFound)
 	{
 		numbers = Multiply(numbers, min);
-		numbers = Sort(numbers);
+		sort(numbers.begin(), numbers.end());
 	}
 	PrintNumbers(numbers);
 	return 0;

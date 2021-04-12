@@ -39,21 +39,3 @@ SCENARIO("Check Multiply when vector is not empty")
 		REQUIRE(multiplied[i] == expected[i]);
 	}
 }
-
-SCENARIO("Check Sort when vector is empty")
-{
-	vector<float> vec = { };
-	vector<float> sorted = Sort(vec);
-	REQUIRE(sorted.size() == 0);
-}
-
-SCENARIO("Check Sort when vector is not empty")
-{
-	vector<float> vec = { 5, 10, 3, 15 };
-	vector<float> sorted = Sort(vec);
-	vector<float> expected = { 3, 5, 10, 15 };
-	REQUIRE(sorted.size() == expected.size());
-	for (size_t i = 0; i < sorted.size(); i++) {
-		REQUIRE(sorted[i] == expected[i]);
-	}
-}
