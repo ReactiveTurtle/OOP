@@ -55,7 +55,7 @@ bool CCar::SetGear(int gear)
 	bool canNotSwitchGear = (!m_isEngineOn && gear != 0) ||
 		!IsValidSpeedForGear(m_speed, gear) ||
 		!IsValidDirectionForChangeGear(gear, m_direction);
-	if (canNotSwitchGear)
+	if (!canNotSwitchGear)
 	{
 		m_gear = gear;
 	}

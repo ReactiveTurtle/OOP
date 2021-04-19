@@ -28,24 +28,35 @@ const map<Protocol, int> DEFAULT_PROTOCOL_PORTS =
 
 bool ParseURL(string const& url, Protocol& protocol, int& port, string& host, string& document)
 {
-	string portRegex = "([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5])";
-	regex urlRegex("^(http|https|ftp):\\/\\/((\\w+\\.{0,1})+\\w+)(:" + portRegex + ")*(\\/.*)*$");
+	regex urlRegex("^(\\w+):\\/\\/((\\w+\\.{0,1})+\\w+)(:\\d{1,5})*(\\/.*)*$");
 	smatch urlMatchResult;
 
 	if (!regex_match(url, urlMatchResult, urlRegex))
 	{
 		return false;
 	}
-	protocol = DECLARED_PROTOCOLS.find(urlMatchResult[1])->second;
+	string mayBeProtocol = urlMatchResult[1];
+	transform(mayBeProtocol.begin(), mayBeProtocol.end(), mayBeProtocol.begin(),
+		[](unsigned char c) { return tolower(c); });
+	auto it = DECLARED_PROTOCOLS.find(mayBeProtocol);
+	if (it == DECLARED_PROTOCOLS.end())
+	{
+		return false;
+	}
+	protocol = it->second;
 
 	string portStr = urlMatchResult[4];
 	port = portStr.empty()
 		? DEFAULT_PROTOCOL_PORTS.find(protocol)->second
 		: stoi(portStr.substr(1));
+	if (port < 1 || port > 65535)
+	{
+		return false;
+	}
 
 	host = urlMatchResult[2];
 
-	string documentStr = urlMatchResult[6];
+	string documentStr = urlMatchResult[5];
 	document = documentStr.empty() ? "" : documentStr.substr(1);
 
 	return true;

@@ -28,6 +28,28 @@ SCENARIO("Check valid protocol 'http'")
 	REQUIRE(actualDocument == expectedDocument);
 }
 
+SCENARIO("Check upper case protocol 'HttP'")
+{
+	Protocol expectedProtocol = Protocol::HTTP;
+	int expectedPort = DEFAULT_HTTP_PORT;
+	string expectedHost = "vk.com";
+	string expectedDocument = "feeds/post";
+
+	Protocol actualProtocol;
+	int actualPort;
+	string actualHost;
+	string actualDocument;
+	string url = "HttP://vk.com/feeds/post";
+	bool wasParsed = ParseURL(url, actualProtocol, actualPort, actualHost, actualDocument);
+
+	REQUIRE(wasParsed);
+	REQUIRE(actualProtocol == expectedProtocol);
+	REQUIRE(actualPort == expectedPort);
+	REQUIRE(actualHost == expectedHost);
+	REQUIRE(actualDocument == expectedDocument);
+}
+
+
 SCENARIO("Check valid protocol 'https'")
 {
 	Protocol expectedProtocol = Protocol::HTTPS;
@@ -143,6 +165,18 @@ SCENARIO("Check invalid max port")
 	string actualHost;
 	string actualDocument;
 	string url = "http://vk.com:65536/feeds/post";
+	bool wasParsed = ParseURL(url, actualProtocol, actualPort, actualHost, actualDocument);
+
+	REQUIRE(!wasParsed);
+}
+
+SCENARIO("Check empty port")
+{
+	Protocol actualProtocol;
+	int actualPort;
+	string actualHost;
+	string actualDocument;
+	string url = "http://vk.com:/feeds/post";
 	bool wasParsed = ParseURL(url, actualProtocol, actualPort, actualHost, actualDocument);
 
 	REQUIRE(!wasParsed);
